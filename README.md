@@ -1,24 +1,21 @@
 # ai-service
 
-FastAPI 기반 AI 여행코스 추천 서비스
+FastAPI 기반 AI 챗봇 서비스
 
 ## 기술 스택
-- Python
+- Python 3.14.3
 - FastAPI
-- LangChain / LlamaIndex
-- OpenAI API / Hugging Face
-- Vector DB (Milvus)
-- Pandas & NumPy
-- ONNX / TensorRT (모델 경량화)
+- LangChain
+- OpenAI API
+- PostgreSQL 연동
 
 ## 주요 기능
-- 지역 / 날짜 / 테마 기반 여행코스 자동 추천
-- LLM 기반 코스 요약 생성
-- 감성 분석 (Sentiment Analysis)
-- AI 모델 서빙 (Kubernetes 환경)
+- 축제 검색 / 추천 챗봇
+- 사용자 질문 의도 파악
+- DB 축제 데이터 기반 카드 결과 반환
 
 ## API
-- POST /ai/course → 여행코스 추천 요청
+- POST /ai/chat → 챗봇 요청/응답
 
 ## 브랜치 규칙
 - feature/기능명 → 기능 개발
