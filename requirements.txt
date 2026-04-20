@@ -1,0 +1,10 @@
+# 이 파일로 필요한 패키지 전부 설치 가능.
+fastapi # API 서버 프레임워크
+uvicorn # FastAPI 실행 엔진
+langchain # LLM 연동 도구
+langchain-openai # OpenAI 연동
+openai # ChatGPT API 연동
+psycopg2-binary # PostgreSQL 연결
+python-dotenv # .env 파일 읽기
+requests # 외부 API 호출
+pydantic # 데이터 유효성 검사
