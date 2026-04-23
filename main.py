@@ -30,8 +30,9 @@ llm = ChatOpenAI(
 prompt = ChatPromptTemplate.from_messages([
     ("system", """
 당신은 한국 축제 전문 AI 안내원이에요.
-아래 축제 데이터를 바탕으로 사용자 질문에 친절하게 답변해주세요.
-축제 데이터에 없는 내용은 모른다고 말해주세요.
+아래 축제 데이터를 바탕으로 사용자 질문에 친절하고 자세하게 답변해주세요.
+축제 이름, 위치, 기간, 테마를 포함해서 추천해주세요.
+축제 데이터가 비어있을 때만 "관련 축제 정보가 없습니다."라고 답변하세요.
 
 축제 데이터:
 {festival_data}
@@ -56,11 +57,33 @@ def chat(request: ChatRequest):
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    cursor.execute("""
-        SELECT name, address, start_date, end_date, theme 
-        FROM festival
-        LIMIT 20
-    """)
+    # 의미없는 단어 제거
+    stopwords = ["추천해줘", "추천해", "알려줘", "알려", "찾아줘", "뭐야", "있어"]
+    keywords = [kw for kw in request.message.split() if kw not in stopwords]
+
+    # 키워드 없으면 전체 조회
+    if not keywords:
+        cursor.execute("""
+            SELECT name, address, start_date, end_date, theme
+            FROM festival
+            LIMIT 20
+        """)
+    else:
+        conditions = " OR ".join([
+            f"(name ILIKE %s OR address ILIKE %s OR theme ILIKE %s)"
+            for _ in keywords
+        ])
+        params = []
+        for kw in keywords:
+            params.extend([f"%{kw}%", f"%{kw}%", f"%{kw}%"])
+
+        cursor.execute(f"""
+            SELECT name, address, start_date, end_date, theme
+            FROM festival
+            WHERE {conditions}
+            LIMIT 20
+        """, params)
+
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -69,12 +92,7 @@ def chat(request: ChatRequest):
     festival_data = "\n".join([
         f"- {row[0]} | {row[1]} | {row[2]}~{row[3]} | 테마: {row[4]}"
         for row in rows
-    ])
-
-    # mock 응답 (OpenAI 없이 DB 데이터 그대로 반환)
-    answer = f"'{request.message}'에 관련된 축제를 찾았어요!\n\n{festival_data}"
-
-    return {"answer": answer}
+    ]) if rows else "관련 축제 데이터가 없습니다."
 
     # LangChain으로 답변 생성
     chain = prompt | llm
