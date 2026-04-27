@@ -18,6 +18,4 @@ FastAPI 기반 AI 챗봇 서비스
 - POST /ai/chat → 챗봇 요청/응답
 
 ## 브랜치 규칙
-- feature/기능명 → 기능 개발
-- fix/버그명 → 버그 수정
 - main → 최종 배포 브랜치
