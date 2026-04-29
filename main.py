@@ -15,7 +15,7 @@ app = FastAPI()
 # CORS 설정 추가(프론트 연결)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", "http://43.201.101.12"],
     allow_credentials=True, #JWT 토큰이나 쿠키를 함께 보낼 때 필요
     allow_methods=["*"],
     allow_headers=["*"], #JSON 데이터 전송할 때 필요한 헤더
